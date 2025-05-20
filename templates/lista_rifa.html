@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Participantes de la Rifa</title>
+</head>
+<body>
+    <h1>Lista de Participantes</h1>
+    {% if participantes %}
+        <ul>
+        {% for participante in participantes %}
+            <li>
+                <strong>Nombre:</strong> {{ participante.nombre }}<br>
+                <strong>Números:</strong> {{ participante.numeros }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aún no hay participantes en la rifa.</p>
+    {% endif %}
+    <p><a href="{{ url_for('index') }}">Volver a la selección</a></p>
+</body>
+</html>
+    

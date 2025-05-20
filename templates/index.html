@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifa de Números</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f9f871;
+            color: #34495e;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: flex-start;
+            padding-bottom: 70px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        h1 {
+            color: #e74c3c;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #mensaje {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 800px;
+            box-sizing: border-box;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 10px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .numeros-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .numero-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #3498db;
+            background-color: #ffffff;
+            color: #3498db;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .numero-button:hover {
+            background-color: #3498db;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .numero-button.seleccionado {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #2ecc71;
+        }
+
+        input[type="submit"] {
+            background-color: #2ecc71;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #27ae60;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #lista-participantes {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        #lista-participantes li {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            border: 1px solid #bdc3c7;
+        }
+
+        #lista-participantes li strong {
+            color: #3498db;
+        }
+
+        #lista-participantes li span {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .sin-participantes {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 20px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #34495e;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        /* Estilos para el diseño de 2 columnas con Bootstrap */
+        @media (min-width: 768px) {
+            form {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+            .numeros-y-participantes {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: stretch;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .numeros-container {
+                width: 48%;
+                margin-bottom: 0;
+            }
+            .lista-participantes-container {
+                width: 48%;
+                margin-top: 0;
+            }
+            #lista-participantes {
+                max-width: 100%;
+            }
+        }
+
+        .lista-participantes-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selecciona tus números para la rifa (00-99)</h1>
+    <div id="mensaje">{{ mensaje }}</div>
+    <form method="POST">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+
+        <div class="numeros-y-participantes">
+            <div class="numeros-container">
+                <h2>Números Disponibles:</h2>
+                {% for numero in numeros_disponibles %}
+                    <div class="numero-button {% if numero in numeros_seleccionados %}seleccionado{% endif %}"
+                         data-numero="{{ numero }}">
+                        {{ numero }}
+                    </div>
+                    <input type="checkbox" id="numero_{{ numero }}" name="numeros" value="{{ numero }}" style="display: none;">
+                {% endfor %}
+            </div>
+
+            <div class="lista-participantes-container">
+                <h2>Lista de Participantes</h2>
+                {% if participantes %}
+                    <ul id="lista-participantes">
+                    {% for participante in participantes %}
+                        <li>
+                            <strong>Nombre:</strong> {{ participante.nombre }}<br>
+                            <span>Números:</span> {{ participante.numeros }}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="sin-participantes">Aún no hay participantes en la rifa.</p>
+                {% endif %}
+            </div>
+        </div>
+        <br>
+        <input type="submit" value="Guardar Selección">
+    </form>
+
+
+    <footer>
+        <p>© {{ anio }} Rifa de Números. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const botonesNumero = document.querySelectorAll('.numero-button');
+        const checkboxesNumero = document.querySelectorAll('input[name="numeros"]');
+
+        botonesNumero.forEach(boton => {
+            boton.addEventListener('click', function() {
+                const numero = this.dataset.numero;
+                this.classList.toggle('seleccionado');
+                const checkbox = document.getElementById(`numero_${numero}`);
+                checkbox.checked = !checkbox.checked;
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>
